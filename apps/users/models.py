@@ -2,7 +2,7 @@ import uuid
 from datetime import timedelta
 
 from common.models import BaseModel
-from common.validators import username_validator
+from common.validators import full_name_validator, username_validator
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
@@ -16,7 +16,10 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     username = models.CharField(
         max_length=32, validators=[username_validator], unique=True
     )
-    full_name = models.CharField(max_length=100)
+    full_name = models.CharField(
+        max_length=100,
+        validators=[full_name_validator],
+    )
     is_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

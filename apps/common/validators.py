@@ -7,3 +7,11 @@ username_validator = RegexValidator(
         "numbers, or underscores."
     ),
 )
+
+full_name_validator = RegexValidator(
+    r"^[A-Za-zА-Яа-яЁё\s\-]{2,100}$",
+    (
+        "Full name must be 2–100 characters and may contain only letters "
+        "(Latin/Cyrillic), spaces, and hyphens."
+    ),
+)

@@ -53,6 +53,9 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "common",
     "users",
+    "posts",
+    "comments",
+    "likes",
 ]
 
 INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -183,7 +186,7 @@ SIMPLE_JWT = {
 }
 
 PUBLIC_BASE_URL = "http://127.0.0.1:8000"
-EMAIL_VERIFY_PATH = "/api/v1/user/verify-email/"
+EMAIL_VERIFY_PATH = "/api/v1/auth/verify-email/"
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_FROM_EMAIL = "no-reply@social-api.local"
