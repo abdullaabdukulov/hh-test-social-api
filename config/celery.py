@@ -1,6 +1,7 @@
 import os
 
 from celery import Celery
+from celery.schedules import crontab
 
 from config.settings import base as settings
 
@@ -21,3 +22,11 @@ app.conf.update(
     task_always_eager=not BROKER_URL,
     timezone="Asia/Tashkent",
 )
+
+app.conf.beat_schedule = {
+    "cleanup-unverified-users-daily": {
+        "task": "cleanup_unverified_users",
+        "schedule": crontab(hour=3, minute=0),
+        "args": (48,),
+    },
+}

@@ -9,7 +9,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path("signup/", SignUpAPIView.as_view(), name="signup"),
+    path("register/", SignUpAPIView.as_view(), name="register"),
     path(
         "verify-email/",
         VerifyEmailAPIView.as_view(),
