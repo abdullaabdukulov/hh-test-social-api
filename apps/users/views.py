@@ -4,12 +4,19 @@ from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
 from users.models import EmailVerificationToken
 from users.response_schema import (
+    LOGIN_SCHEMA_RESPONSE,
     SIGNUP_SCHEMA_RESPONSE,
     VERIFY_EMAIL_SCHEMA_RESPONSE,
 )
-from users.serializers import SignUpSerializer, VerifyEmailSerializer
+from users.serializers import (
+    LoginSerializer,
+    SignUpSerializer,
+    UserInfoSerializer,
+    VerifyEmailSerializer,
+)
 
 User = get_user_model()
 
@@ -76,3 +83,32 @@ class VerifyEmailAPIView(generics.GenericAPIView):
                 "username": user.username,
             }
         )
+
+
+@custom_response
+class LoginAPIView(TokenObtainPairView):
+    serializer_class = LoginSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    @swagger_auto_schema(responses=LOGIN_SCHEMA_RESPONSE)
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+
+@custom_response
+class UserInfoAPIView(generics.RetrieveAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = UserInfoSerializer
+
+    def get_object(self):
+        return self.request.user
+
+
+@custom_response
+class UserUpdateAPIView(generics.UpdateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = UserInfoSerializer
+    http_method_names = ["patch"]
+
+    def get_object(self):
+        return self.request.user
