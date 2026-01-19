@@ -181,3 +181,9 @@ SIMPLE_JWT = {
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
 }
+
+PUBLIC_BASE_URL = "http://127.0.0.1:8000"
+EMAIL_VERIFY_PATH = "/api/v1/user/verify-email/"
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@social-api.local"

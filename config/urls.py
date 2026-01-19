@@ -56,7 +56,9 @@ schema_view = get_schema_view(
 
 urlpatterns = [path("default-admin-panel/", admin.site.urls)]
 
-
+urlpatterns += [
+    path("api/v1/user/", include(("users.urls", "users"), "users")),
+]
 if django_settings_module in ("development", "staging"):
     urlpatterns += [
         path(
@@ -70,7 +72,6 @@ if django_settings_module in ("development", "staging"):
             name="schema-redoc",
         ),
     ]
-
 
 if django_settings_module == "development":
     urlpatterns += [
