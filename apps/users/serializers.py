@@ -1,3 +1,8 @@
+from common.exceptions import (
+    VerificationTokenExpired,
+    VerificationTokenInvalid,
+    VerificationTokenUsed,
+)
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.utils import timezone
@@ -26,12 +31,12 @@ class VerifyEmailSerializer(serializers.Serializer):
         try:
             t = EmailVerificationToken.objects.get(token=token)
         except EmailVerificationToken.DoesNotExist:
-            raise serializers.ValidationError("Invalid token.")
+            raise VerificationTokenInvalid
 
         if t.used_at:
-            raise serializers.ValidationError("Token already used.")
+            raise VerificationTokenUsed
         if timezone.now() >= t.expires_at:
-            raise serializers.ValidationError("Token expired.")
+            raise VerificationTokenExpired
 
         return token
 

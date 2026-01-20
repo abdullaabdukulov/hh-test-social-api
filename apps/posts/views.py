@@ -13,6 +13,7 @@ from apps.common.permissions import IsOwner, IsVerifiedOrReadOnly
 from .filters import PostFilter
 from .models import Post
 from .response_schema import (
+    FEED_SCHEMA_RESPONSE,
     POST_DETAIL_SCHEMA_RESPONSE,
     POSTS_LIST_SCHEMA_RESPONSE,
 )
@@ -48,6 +49,10 @@ class FeedAPIView(generics.ListAPIView):
             .prefetch_related(Prefetch("posts", queryset=post_qs))
             .order_by("username")
         )
+
+    @swagger_auto_schema(responses=FEED_SCHEMA_RESPONSE)
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 
 @custom_response
@@ -100,7 +105,7 @@ class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         qs = Post.objects.select_related("author")
 
         if self.request.method == "GET":
-            qs = qs.prefetch_related("comments__author", "likes__user")
+            qs = qs.prefetch_related("comments__author", "likes")
         return qs
 
     def get_serializer_class(self):

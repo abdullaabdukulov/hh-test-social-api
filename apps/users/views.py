@@ -9,6 +9,8 @@ from users.models import EmailVerificationToken
 from users.response_schema import (
     LOGIN_SCHEMA_RESPONSE,
     SIGNUP_SCHEMA_RESPONSE,
+    USER_ME_SCHEMA_RESPONSE,
+    USER_UPDATE_SCHEMA_RESPONSE,
     VERIFY_EMAIL_SCHEMA_RESPONSE,
 )
 from users.serializers import (
@@ -103,6 +105,10 @@ class UserInfoAPIView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
+    @swagger_auto_schema(responses=USER_ME_SCHEMA_RESPONSE)
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 @custom_response
 class UserUpdateAPIView(generics.UpdateAPIView):
@@ -112,3 +118,7 @@ class UserUpdateAPIView(generics.UpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+    @swagger_auto_schema(responses=USER_UPDATE_SCHEMA_RESPONSE)
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
