@@ -1,0 +1,14 @@
+export PROJECT_NAME="social_api"
+export DJANGO_SETTINGS_MODULE="config.settings.test"
+export SECRET_KEY=secret
+export DB_NAME=test_db
+export DB_HOST=postgres
+export DB_PORT=5432
+export DB_USER=test
+export DB_PASSWORD=test
+export REDIS_HOST=redis
+export REDIS_PORT=6379
+export REDIS_USER=
+export REDIS_PASSWORD=
+export CELERY_FLOWER_USER=
+export CELERY_FLOWER_PASSWORD=

@@ -1,0 +1,88 @@
+version: '3.8'
+
+volumes:
+    social_cache:
+#     social_media:
+#     social_static:
+
+services:
+  app: &app
+    build:
+      context: .
+    container_name: ${PROJECT_NAME}-stage-app
+    restart: always
+    command: sh /code/run.sh app
+    volumes:
+      - .:/code
+      # - social_media:/code/media
+      # - social_media:/code/static
+    env_file:
+      - ./.env
+    # expose:
+    #   - 8000
+    ports:
+      - 8000:8000
+    networks:
+      - social
+
+  redis:
+    image: redis/redis-stack-server:latest
+    container_name: ${PROJECT_NAME}-stage-redis
+    restart: always
+    volumes:
+      - social_cache:/var/lib/redis/data
+    networks:
+      - social
+
+  celery:
+    <<: *app
+    container_name: ${PROJECT_NAME}-stage-celery
+    command: sh /code/run.sh worker
+    ports:
+      - 8080:8000
+    depends_on:
+      - app
+      - redis
+
+  beat:
+    <<: *app
+    container_name: ${PROJECT_NAME}-stage-beat
+    command: sh /code/run.sh beat
+    depends_on:
+      - app
+
+  flower:
+    <<: *app
+    container_name: ${PROJECT_NAME}-stage-flower
+    command: sh /code/run.sh flower
+    depends_on:
+      - app
+      - celery
+      - redis
+    ports:
+      - 5555:5555
+    networks:
+      - social
+
+  # nginx:
+  #   build:
+  #     context: ./nginx
+  #   container_name: ${PROJECT_NAME}-stage-nginx
+  #   restart: always
+  #   volumes:
+  #     - social_media:/code/media
+  #     - social_static:/code/static
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   depends_on:
+  #     - app
+  #   networks:
+  #     - social
+
+
+
+
+networks:
+  social:
+    driver: bridge

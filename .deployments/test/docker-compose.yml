@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app: &app
+    build:
+      context: .
+    container_name: ${PROJECT_NAME}-test-app
+    command: sh /code/run.sh test
+    restart: always
+    volumes:
+      - .:/code
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - social_test
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: ${PROJECT_NAME}-test-postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    networks:
+      - social_test
+
+  redis:
+    image: redis:6-alpine
+    container_name: ${PROJECT_NAME}-test-redis
+    restart: always
+    networks:
+      - social_test
+
+networks:
+  social_test:
+    driver: bridge

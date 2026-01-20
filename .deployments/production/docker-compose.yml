@@ -1,0 +1,85 @@
+version: '3.8'
+
+volumes:
+    social_cache:
+    # social_media:
+    # social_static:
+
+services:
+  app: &app
+    build:
+      context: .
+    container_name: ${PROJECT_NAME}-prod-app
+    restart: always
+    command: sh /code/run.sh app
+    volumes:
+      - .:/code
+      # - social_media:/code/media
+      # - social_static:/code/static
+    env_file:
+      - ./.env
+    # expose:
+    #   - 8000
+    ports:
+      - 8000:8000
+    networks:
+      - social
+
+  redis:
+    image: redis/redis-stack-server:latest
+    container_name: ${PROJECT_NAME}-prod-redis
+    restart: always
+    volumes:
+      - social_cache:/var/lib/redis/data
+    networks:
+      - social
+
+  celery:
+    <<: *app
+    container_name: ${PROJECT_NAME}-prod-celery
+    command: sh /code/run.sh worker
+    ports:
+      - 8080:8000
+    depends_on:
+      - app
+      - redis
+
+  beat:
+    <<: *app
+    container_name: ${PROJECT_NAME}-stage-beat
+    command: sh /code/run.sh beat
+    depends_on:
+      - app
+
+  # nginx:
+  #   build:
+  #     context: ./nginx
+  #   container_name: ${PROJECT_NAME}-prod-nginx
+  #   restart: always
+  #   volumes:
+  #     - ./deployments/nginx/nginx.conf:/etc/nginx/conf.d/:ro
+  #     - ./certbot/conf:/etc/letsencrypt/:ro
+  #     - ./certbot/www:/var/www/certbot/:ro
+  #     - social_media:/code/media
+  #     - social_static:/code/static
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   depends_on:
+  #     - app
+  #     - db
+  #   networks:
+  #     - social
+
+  # certbot:
+  #   image: certbot/certbot:latest
+  #   volumes:
+  #     - ./certbot/conf:/etc/letsencrypt/:rw
+  #     - ./certbot/www/:/var/www/certbot/:rw
+  #   networks:
+  #     - social
+
+
+networks:
+  social:
+    driver: bridge

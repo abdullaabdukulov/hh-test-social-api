@@ -5,7 +5,6 @@ from django.db import models
 
 
 class Post(BaseModel):
-    objects = None
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

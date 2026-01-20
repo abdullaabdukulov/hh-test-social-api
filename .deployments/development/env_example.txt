@@ -1,0 +1,10 @@
+export PROJECT_NAME="social_api"
+export SECRET_KEY=
+export DB_NAME=
+export DB_HOST="localhost"
+export DB_PORT=4432
+export DB_USER=
+export DB_PASSWORD=
+export REDIS_HOST="localhost"
+export REDIS_PORT=6379
+export REDIS_PASSWORD=
